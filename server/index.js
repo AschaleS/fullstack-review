@@ -20,6 +20,9 @@ app.post('/repos', function (req, res) {
   res.end();
 });
 
+app.get('/repos', function (req, res) {
+  getTop25Repos(console.log)
+});
 
 let port = 1128;
 
