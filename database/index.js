@@ -8,13 +8,13 @@ db.once('open', function () {
 });
 
   let repoSchema = new mongoose.Schema({
-    id: Number,
-    repo_name: String,
-    owner_name: String,
-    owner_id: Number,
-    git_url: String,
-    html_url: String,
-    updated_at: Date
+    id: { type: Number, unique: true},
+    repo_name: { type: String, required: true },
+    user_name: { type: String, required: true },
+    owner_id: { type: Number, required: true },
+    git_url: { type: String, required: true },
+    html_url: { type: String, required: true },
+    updated_at: { type: Date, required: true }
   });
 
   let Repo = mongoose.model('Repo', repoSchema);
@@ -22,13 +22,13 @@ db.once('open', function () {
   let save = (repos) => {
     let repoCollection = [];
 
-    for (let i = 0; i <= repos.length; i++) {
+    for (let i = 0; i < repos.length; i++) {
       let repo = repos[i];
 
       let newRepo = new Repo({
         id: repo.id,
         repo_name: repo.name,
-        owner_name: repo.owner.login,
+        user_name: repo.owner.login,
         owner_id: repo.owner.id,
         git_url: repo.git_url,
         html_url: repo.html_url,
@@ -45,5 +45,13 @@ db.once('open', function () {
       });
     }
   }
+
+  let getTop25Repos = (callback) => {
+    Repo.find({}).limit(25).sort({updated_at: -1}).exec((err, res) => {
+     // callback('Top 25 query', res);
+     callback(res);
+    });
+  }
+
 
 module.exports = { save, getTop25Repos };
