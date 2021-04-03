@@ -3,6 +3,7 @@ const config = require('../config.js');
 const request = require('request');
 
 let getReposByUsername = (username, callback) => {
+  console.log(callback);
   let url = `https://api.github.com/users/${username}/repos`;
   // TODO - Use the axios module to request repos for a specific
   // user from the github API
@@ -19,9 +20,10 @@ let getReposByUsername = (username, callback) => {
   // request(options, callback);
   request.get(options, (err, res, body) => {
     if (err) {
-      return console.log(err);
+      console.log(err);
     } else {
-      console.log(body);
+      console.log("this is the result from the API:", body);
+      callback(JSON.parse(body));
     };
   });
 
