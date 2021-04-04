@@ -34,7 +34,6 @@ app.get('/repos', function (req, res) {
       })
     });
 
-
     updateDatabase.then(() => {
       getTop25Repos((results) => {
         res.send(results);
