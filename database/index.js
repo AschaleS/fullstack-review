@@ -22,6 +22,7 @@ db.once('open', function () {
 
   let save = (repos, callback) => {
     let repoCollection = [];
+    var dbOperations = []
 
     for (let i = 0; i < repos.length; i++) {
       let repo = repos[i];
@@ -37,26 +38,41 @@ db.once('open', function () {
       });
       repoCollection.push(newRepo);
 
-      // newRepo.save(function (err, request) {
-      //   if (err) {
-      //     callback(err);
-      //   } else {
-      //     callback("Successfully inserted ", request);
-      //   }
-      // });
+      dbOperations.push(
+        {
+            updateOne: {
+                filter: { id: newRepo.id },
+                update: {
+                    $set: {"id": newRepo.id, "repo_name": newRepo.repo_name, "user_name": newRepo.user_name, "owner_id": newRepo.owner_id, "git_url": newRepo.git_url, "html_url": repo.html_url, "pushed_at": repo.pushed_at },
+                },
+                upsert: true
+            }
+        }
+    )
     }
 
-    const options = { ordered: true };
-    Repo.insertMany(repoCollection, options, callback);
+
+    Repo.bulkWrite(dbOperations, { ordered: false }, callback);
 
   }
 
   let getTop25Repos = (callback) => {
     Repo.find({}).limit(25).sort({pushed_at: -1}).exec((err, res) => {
-     // callback('Top 25 query', res);
+      if(err){
+        console.log(err);
+      }
+     callback(res);
+    });
+  }
+
+  let getUniqueUsernames = (callback) => {
+    Repo.distinct("user_name").exec((err, res) => {
+      if(err){
+        console.log(err);
+      }
      callback(res);
     });
   }
 
 
-module.exports = { save, getTop25Repos };
+module.exports = { save, getTop25Repos, getUniqueUsernames };

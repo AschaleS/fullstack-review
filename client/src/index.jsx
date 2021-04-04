@@ -14,6 +14,9 @@ class App extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.getTopList();
+  }
   getTopList(){
     console.log('getting top list')
     let url = 'http://localhost:1128/repos';
@@ -28,10 +31,15 @@ class App extends React.Component {
       });
     }.bind(this));
   }
+  // getTopList() {
+  //   fetch('http://localhost:1128/repos')
+  //       .then(response => response.json())
+  //       .then(response => this.setState({ repos: response }))
+  //       .catch(err => err)
+  // };
 
-  componentDidMount() {
-    this.getTopList();
-  }
+
+
   search(term) {
     let url = 'http://localhost:1128/repos';
     var request = $.ajax({
@@ -42,6 +50,10 @@ class App extends React.Component {
         this.getTopList();
       }.bind(this)
     });
+
+    // request.done(function(){
+    //   this.getTopList().bind(this);
+    // })
 
 
     console.log(`${term} was searched`);
